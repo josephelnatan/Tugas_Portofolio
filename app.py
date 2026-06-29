@@ -91,7 +91,25 @@ def kirim_pesan():
                 <p>{pesan}</p>
             """
         })
-        return "<h1>✅ Pesan berhasil dikirim! Silakan cek kotak masuk email kamu.</h1>"
+        return """
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesan Terkirim</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="text-center p-5 bg-white rounded shadow" style="max-width: 500px;">
+        <div style="font-size: 60px;">✅</div>
+        <h3 class="fw-bold mt-3">Pesan Terkirim!</h3>
+        <p class="text-muted">Terima kasih telah menghubungi saya. Saya akan segera membalas pesan anda.</p>
+        <a href="/" class="btn btn-primary mt-3 fw-bold">← Kembali ke Halaman Utama</a>
+    </div>
+</body>
+</html>
+"""
     except Exception as e:
         print(f"Gagal mengirim email: {e}")
         return f"<h1>❌ Gagal mengirim pesan. Eror: {e}</h1>"
