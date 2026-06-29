@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Kelola Proyek</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/admin/profil">⚙️ Admin Panel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/admin/profil">Profil</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/admin/proyek">Proyek</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/skill">Skill</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/pengalaman">Pengalaman</a></li>
+                </ul>
+                <div>
+                    <a href="/logout" class="btn btn-danger fw-bold">🚪 Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <div class="row">
+            <div class="col-md-5 mb-4">
+                <div class="card shadow border-0">
+                    <div class="card-header bg-white pt-4 pb-2 border-0">
+                        <!-- Judul form berubah sesuai mode -->
+                        <h4 class="fw-bold mb-0">
+                            {% if proyek_edit %}
+                                ✏️ Edit Proyek
+                            {% else %}
+                                🚀 Tambah Proyek Baru
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/admin/proyek" method="POST" enctype="multipart/form-data">
+
+                            <!-- Hidden input edit_id, hanya muncul saat mode edit -->
+                            {% if proyek_edit %}
+                                <input type="hidden" name="edit_id" value="{{ proyek_edit.id }}">
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Judul Proyek:</label>
+                                <input type="text" name="judul" class="form-control"
+                                    placeholder="Contoh: Web E-Commerce"
+                                    value="{{ proyek_edit.judul if proyek_edit else '' }}"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Deskripsi:</label>
+                                <textarea name="deskripsi" class="form-control" rows="4"
+                                    placeholder="Jelaskan tentang proyek ini..."
+                                    required>{{ proyek_edit.deskripsi if proyek_edit else '' }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Link Proyek (Opsional):</label>
+                                <input type="url" name="link_proyek" class="form-control"
+                                    placeholder="https://github.com/..."
+                                    value="{{ proyek_edit.link_proyek if proyek_edit else '' }}">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Foto/Screenshot Proyek:</label>
+
+                                <!-- Tampilkan foto lama saat mode edit -->
+                                {% if proyek_edit and proyek_edit.foto_url %}
+                                    <div class="mb-2">
+                                        <img src="{{ proyek_edit.foto_url }}" class="img-thumbnail" style="max-height: 100px;">
+                                        <small class="text-muted d-block mt-1">Kosongkan jika tidak ingin mengganti foto.</small>
+                                    </div>
+                                {% endif %}
+
+                                <input type="file" name="foto" class="form-control" accept="image/*"
+                                    {{ 'required' if not proyek_edit else '' }}>
+                            </div>
+
+                            <button type="submit" class="btn w-100 fw-bold
+                                {{ 'btn-warning' if proyek_edit else 'btn-primary' }}">
+                                {{ '💾 SIMPAN PERUBAHAN' if proyek_edit else '➕ TAMBAH PROYEK' }}
+                            </button>
+
+                            <!-- Tombol batal saat mode edit -->
+                            {% if proyek_edit %}
+                                <a href="/admin/proyek" class="btn btn-secondary w-100 fw-bold mt-2">✖ Batal</a>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="card shadow border-0">
+                    <div class="card-header bg-white pt-4 pb-2 border-0">
+                        <h4 class="fw-bold mb-0">📋 Daftar Proyek Saat Ini</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if daftar_proyek %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Foto</th>
+                                            <th>Judul & Deskripsi</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for proyek in daftar_proyek %}
+                                        <tr class="{{ 'table-warning' if proyek_edit and proyek_edit.id == proyek.id else '' }}">
+                                            <td>
+                                                <img src="{{ proyek.foto_url }}" alt="Proyek"
+                                                    class="img-thumbnail"
+                                                    style="max-width: 100px; max-height: 70px; object-fit: cover;">
+                                            </td>
+                                            <td>
+                                                <h6 class="fw-bold mb-1">{{ proyek.judul }}</h6>
+                                                <small class="text-muted d-block text-truncate" style="max-width: 300px;">{{ proyek.deskripsi }}</small>
+                                                {% if proyek.link_proyek %}
+                                                    <a href="{{ proyek.link_proyek }}" target="_blank"
+                                                        class="badge bg-secondary text-decoration-none mt-1">🔗 Lihat Link</a>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="/admin/proyek?edit={{ proyek.id }}"
+                                                    class="btn btn-warning btn-sm mb-1">✏️ Edit</a>
+                                                <a href="/admin/proyek/hapus/{{ proyek.id }}"
+                                                    class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Hapus proyek ini?')">🗑️ Hapus</a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-muted fst-italic text-center my-4">Belum ada proyek yang ditambahkan.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

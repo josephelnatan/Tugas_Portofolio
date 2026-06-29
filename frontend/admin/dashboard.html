@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Kelola Profil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-5 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/admin/profil">⚙️ Admin Panel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="/admin/profil">Profil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/proyek">Proyek</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/skill">Skill</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/admin/pengalaman">Pengalaman</a></li>
+                </ul>
+                <div>
+                    <a href="/logout" class="btn btn-danger fw-bold">🚪 Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow border-0">
+                    <div class="card-header bg-white pt-4 pb-3 text-center border-0">
+                        <h2 class="fw-bold mb-0">👤 Kelola Profil Diri</h2>
+                        <p class="text-muted">Isi detail informasi diri kamu untuk ditampilkan di halaman utama.</p>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <form action="/admin/profil" method="POST" enctype="multipart/form-data">
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Nama Lengkap:</label>
+                                <input type="text" name="nama" class="form-control" value="{{ profil.nama if profil else '' }}" required>
+                            </div>
+                    
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Deskripsi Singkat:</label>
+                                <textarea name="deskripsi" class="form-control" rows="5" required>{{ profil.deskripsi if profil else '' }}</textarea>
+                            </div>
+                    
+                            <div class="mb-4">
+                                <label class="form-label fw-bold d-block">Foto Profil Saat Ini:</label>
+                                {% if profil and profil.foto_url %}
+                                    <img src="{{ profil.foto_url }}" alt="Foto Profil" class="img-thumbnail mb-3 shadow-sm" style="max-width: 150px; border-radius: 10px;">
+                                {% else %}
+                                    <p class="text-muted fst-italic">Belum ada foto profil.</p>
+                                {% endif %}
+                                
+                                <label class="form-label fw-bold d-block">Ganti Foto Baru (Opsional):</label>
+                                <input type="file" name="foto" class="form-control" accept="image/*">
+                            </div>
+                    
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold text-uppercase">
+                                💾 Simpan Perubahan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
